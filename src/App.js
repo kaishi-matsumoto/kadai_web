@@ -30,6 +30,14 @@ function App() {
       )
   }, [])
  
+  const clickDelete=(e)=>{
+    
+    const deletePages = pages.slice();
+    deletePages.splice(e,1);
+    setPages(deletePages);
+    e.preventDefault();
+    
+  }
 
       if (error) {
         return <div>Error: {error.message}</div>;
@@ -39,22 +47,17 @@ function App() {
       return <div>
         {console.log(pages)}
         {pages.map(item => (
-        <div key={item.id}>          
-         
-              <div>{item.name}</div>
-              <br />
-              <div>{item.email}</div>
-              <br />
-              <div>{item.hash}</div>
-              <br />
-              <div>{item.id}</div>
-              <br />
-              <div>{item.created_at}</div>
-              <br />
-              <div>{item.updated_at}</div>
-              <br />
-          
-        </div>
+          <form   key={item.id}>
+            <div>{item.name}</div>
+            <br />
+            <div>{item.email}</div>
+            <br />
+            <div>{item.hash}</div>
+            <br />
+            <div>{item.id}</div>
+            <br />
+            <input onClick={clickDelete} name="削除" type="button" value="削除" />
+          </form>
           ))}</div>
     }
 }
