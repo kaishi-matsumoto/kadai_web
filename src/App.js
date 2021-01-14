@@ -35,10 +35,9 @@ function App() {
   
   const clickDelete=(e)=>{
    
-    let datas_id = datas.find(p => p.id === datas.id)
+    let datas_id = datas.find(d => d.id === datas.id)
     console.log(datas_id)
     
-    if(!isFetched){
       fetch("https://api.manage.prona.com/client/"+datas_id ,{
       method: 'DELETE',
         headers: {
@@ -53,18 +52,18 @@ function App() {
        .then((result)=>{
          setIsFetched(true);
          console.log(result);
+        //fetchが成功=isFetchedがtrueの時なので、以下の配列削除を実行
+        const deleteDatas = datas.slice();
+        deleteDatas.splice(e,1);
+        setDatas(deleteDatas);
+        e.preventDefault();
+
+        if(!isFetched){
+          return <div>削除中...</div>
+        }else{
+          return <div>削除しました。</div>
+        }
        })
-      return <div>fetching...</div>
-    }else{
-
-      const deleteDatas = datas.slice();
-      deleteDatas.splice(e,1);
-      setDatas(deleteDatas);
-      e.preventDefault();
-
-    return <div>{datas}</div>
-    }
-    
   }
 
       if (error) {
