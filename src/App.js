@@ -30,22 +30,24 @@ function App() {
         }
       )
   }, [])
- 
-  const clickDelete=(e)=>{
+  
 
-    const data= document.querySelector('.fetchForm');
-    let formData = new FormData(data)
+  
+  const clickDelete=(e)=>{
+   
+    let datas_id = datas.find(p => p.id === datas.id)
+    console.log(datas_id)
     
-    setIsFetched(true);
     if(!isFetched){
-      fetch("https://api.manage.prona.com/client/{id}",{
+      fetch("https://api.manage.prona.com/client/"+datas_id ,{
       method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': 'http://localhost:3000',
+          'Access-Control-Allow-Origin': 'http://localhost:3000', 
         },
+        
         mode: 'cors',
-        body: formData
+        body: datas //DELETEメソッド使用時にjsonにパースするとエラーが起きるためそのまま渡しました。
        })
        .then(response=> response.text())
        .then((result)=>{
@@ -54,6 +56,7 @@ function App() {
        })
       return <div>fetching...</div>
     }else{
+
       const deleteDatas = datas.slice();
       deleteDatas.splice(e,1);
       setDatas(deleteDatas);
@@ -67,13 +70,12 @@ function App() {
       if (error) {
         return <div>Error: {error.message}</div>;
       } else if (!isLoaded) {
-        console.log(isLoaded)
+        
         return <div>Loading...</div>;
       } else{
       return <div>
-        {console.log(datas)}
         {datas.map(item => (
-          <form className='fetchForm' key={item.id}>
+          <form key={item.id}>
             <div>{item.name}</div>
             <br />
             <div>{item.email}</div>
@@ -82,7 +84,7 @@ function App() {
             <br />
             <div>{item.id}</div>
             <br />
-            <input onClick={clickDelete} name="削除" type="button" value="削除" />
+            <input onClick={clickDelete} type="button" value="削除" />
           </form>
           ))}</div>
     }
