@@ -69,7 +69,9 @@ function App() {
       return <div>
         {datas.map((item, index) => (
           <form key={index} 
-          onSubmit={()=>fetch("https://api.manage.prona.com/client/"+datas[index].id ,{
+          onSubmit={(e)=>{
+            console.log(datas[index])
+            fetch("https://api.manage.prona.com/client/"+datas[index].id ,{
             method: 'DELETE',
               headers: {
                 'Content-Type': 'application/json',
@@ -86,9 +88,9 @@ function App() {
               deleteData.splice(index,1);
               setDatas(deleteData);
               setIsDeleting(true)
-              index.preventDefault()
+              e.preventDefault()
             }
-          })} >
+          })}} >
            
             <div>{item.name}</div>
             <br />
