@@ -4,7 +4,9 @@ function App() {
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [datas, setDatas] = useState([]);
-  const [isDeleted, setIsDeleted] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
+  
+
 
   useEffect(() => {
     fetch("https://api.manage.prona.com/client",{
@@ -31,52 +33,56 @@ function App() {
   }, [])
 
   const clickDelete=(e)=>{
-    
-        if(!isDeleted){
-          fetch("https://api.manage.prona.com/client/"+datas[0].id ,{
-             method: 'DELETE',
-              headers: {
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': 'http://localhost:3000', 
-              },
-              mode: 'cors',
-          })
-          .then(response=> response.text())
-          .then((result)=>{
-            setIsDeleted(true);
-            console.log(result);
-          })
+          console.log(e)
           
-          }else{
-            const deleteDatas = datas.slice();
-            deleteDatas.splice(e,1);
-            setDatas(deleteDatas);
-            setIsDeleted(false)
-            e.preventDefault();
-          }
-       
+          if(!isDeleting){
+            setIsDeleting(true);
+            fetch("https://api.manage.prona.com/client/"+datas[e].id ,{
+              method: 'DELETE',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Access-Control-Allow-Origin': 'http://localhost:3000', 
+                },
+                mode: 'cors',
+            })
+            .then(response=> response.text())
+            .then((result)=>{
+              console.log(result);
+              if(result === datas[0].id){
+                const deleteData = datas.slice();
+                deleteData.splice(e,1);
+                setDatas(deleteData);
+                setIsDeleting(true)
+                e.preventDefault();
+              }
+            })
+            
+            }
+
   }
       if (error) {
         return <div>Error: {error.message}</div>;
       } else if (!isLoaded) {
         
         return <div>Loading...</div>;
-      } else{
+      } else {
         
       return <div>
-        {datas.map(item => (
-          <form key={item.id}>
+        {datas.map((item, index) => (
+          <form key={index} onSubmit={clickDelete} >
+           
             <div>{item.name}</div>
             <br />
-            <div>{item.id}</div>
+            <div className='id'>{item.id}</div>
             <br />
-            <input onClick={clickDelete} type="button" value="削除" />
+            <input type="submit" value="削除" />
             <br />
+           
           </form>
           ))}
-          {isDeleted?  <div>削除中...</div> 
+          {isDeleting?  <div>削除しました。</div> 
           : 
-          <div>削除しました。</div>}
+          <div>削除中...</div>}
           </div>
     }
 }
