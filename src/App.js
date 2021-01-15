@@ -32,7 +32,7 @@ function App() {
       )
   }, [])
 
-  const clickDelete=(e)=>{
+  /* const submitDelete=(e)=>{
           console.log(e)
           
           if(!isDeleting){
@@ -56,10 +56,9 @@ function App() {
                 e.preventDefault();
               }
             })
-            
             }
 
-  }
+  } */
       if (error) {
         return <div>Error: {error.message}</div>;
       } else if (!isLoaded) {
@@ -69,7 +68,27 @@ function App() {
         
       return <div>
         {datas.map((item, index) => (
-          <form key={index} onSubmit={clickDelete} >
+          <form key={index} 
+          onSubmit={()=>fetch("https://api.manage.prona.com/client/"+datas[index].id ,{
+            method: 'DELETE',
+              headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': 'http://localhost:3000', 
+              },
+              mode: 'cors',
+          })
+          .then(response=> response.text())
+          .then((result)=>{
+            console.log(result);
+            if(result === datas[index].id){
+              setIsDeleting(false)
+              const deleteData = datas.slice();
+              deleteData.splice(index,1);
+              setDatas(deleteData);
+              setIsDeleting(true)
+              index.preventDefault()
+            }
+          })} >
            
             <div>{item.name}</div>
             <br />
