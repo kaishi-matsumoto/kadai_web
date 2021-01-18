@@ -1,18 +1,12 @@
 import React, { useEffect ,useState } from 'react';
-/* import {
-  BrowserRouter as Router,
-  Route,
-  Link,
-  Switch,
-} from 'react-router-dom';
- */
+
 
 function App() {
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [datas, setDatas] = useState([]);
   const [isDeleting, setIsDeleting] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
+  const [isDeleted, setIsDeleted] = useState(false)
 
 
   useEffect(() => {
@@ -42,7 +36,7 @@ function App() {
   const clickDelete=(e,index)=>{
           
           if(!isDeleting){
-            setIsLoading(true)
+            setIsDeleting(true)
             fetch("https://api.manage.prona.com/client/"+datas[index].id ,{
               method: 'DELETE',
                 headers: {
@@ -54,17 +48,39 @@ function App() {
             .then(response => response.json())
             .then((result) => {              
               
-              if(result.id===datas[index].id ){
+              if(result.id===datas[index].id && !isDeleted ){
+
                 const deleteData = datas.slice();
                 deleteData.splice(index,1);
                 setDatas(deleteData);
-                setIsLoading(false)
+                
                 setIsDeleting(false)
-              }else{
-                console.log(datas[index])
-                console.log(result.id===datas[index].id ? 'OK': 'NO')
-                setIsLoading(false)
-                setIsLoading(false)
+                setIsDeleted(true)
+
+                if(!isDeleted && isDeleting){
+
+                  const deleteData = datas.slice();
+                  deleteData.splice(index,1);
+                  setDatas(deleteData);
+                  
+                  setIsDeleted(true)
+                  setIsDeleting(false)
+                }
+
+              }/* else if(result.id===datas[index].id && isDeleted){
+
+                
+
+                const deleteData = datas.slice();
+                deleteData.splice(index,1);
+                setDatas(deleteData);
+
+                setIsDeleted(false)
+                setIsDeleting(false)
+                
+
+              } */else{
+                setIsDeleting(false)
               }
 
             })
@@ -84,14 +100,16 @@ function App() {
       } else {
         
       return <div>
+        
+        {isDeleted? <div>削除しました。</div> : <div></div>}
 
-          {isLoading? 
+        {isDeleting? 
           <div>削除中...</div>
 
             :
 
           <div>
-            削除しました。
+            
             {datas.map((item, index) => (
               <form key={index} >
               
@@ -107,6 +125,8 @@ function App() {
           </div> 
           
           }
+        
+          
           </div>
     }
 }
