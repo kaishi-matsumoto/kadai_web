@@ -48,30 +48,25 @@ function App() {
             })
             .then(response => response.json())
             .then((result) => {              
-              
-              
-              //このif文の「deleteメソッドを実行してから、対象の配列が削除されるまで」の間は、isDeletedはfalse
-              if(result.id === datas[index].id){
+                            
+              if(result.id === datas[index].id && !isDeleted && isDeleting){
            
                 const deleteData = datas.slice();
                 deleteData.splice(index,1);
                 setDatas(deleteData);
-                if(!isDeleted){
-                  setIsDeleted(true)
-                  
-                }else{
-                  setIsDeleted(false)
-                }
-              
+                /* setIsDeleted(true) */
+                setIsDeleting(false)
+
+              }else if(result.id === datas[index].id && isDeleted && !isDeleting){
+
+                const deleteData = datas.slice();
+                deleteData.splice(index,1);
+                setDatas(deleteData);
+                setIsDeleted(false)
+                setIsDeleting(true)
+
               }
 
-              if(!isDeleted){
-                setIsDeleted(true)
-                
-              }else{
-                setIsDeleted(false)
-              }
-              
             })}
             
   }
