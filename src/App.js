@@ -36,7 +36,7 @@ function App() {
   const clickDelete=(e,index)=>{
           
           if(!isDeleting){
-           
+           ///この時isDeletedはfalse
             setIsDeleting(true)
             fetch("https://api.manage.prona.com/client/"+datas[index].id ,{
               method: 'DELETE',
@@ -49,23 +49,27 @@ function App() {
             .then(response => response.json())
             .then((result) => {              
               
-              if(!isDeleted){
-                setIsDeleting(true)
-                setIsDeleted(false)
-              }
-
+              
+              //このif文の「deleteメソッドを実行してから、対象の配列が削除されるまで」の間は、isDeletedはfalse
               if(result.id === datas[index].id){
-                setIsDeleted(false)
+           
                 const deleteData = datas.slice();
                 deleteData.splice(index,1);
                 setDatas(deleteData);
-                
-              }else if(isDeleted){
-                setIsDeleting(false)
-                setIsDeleted(false)
-              }else{
-                setIsDeleting(false)
+                if(!isDeleted){
+                  setIsDeleted(true)
+                  
+                }else{
+                  setIsDeleted(false)
+                }
+              
+              }
+
+              if(!isDeleted){
                 setIsDeleted(true)
+                
+              }else{
+                setIsDeleted(false)
               }
               
             })}
