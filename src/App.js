@@ -6,7 +6,7 @@ function App() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [datas, setDatas] = useState([]);
   const [isDeleting, setIsDeleting] = useState(false)
-  const [isDeleted, setIsDeleted] = useState(false)
+  const [isDeleted, setIsDeleted] = useState(true)
 
 
   useEffect(() => {
@@ -35,7 +35,8 @@ function App() {
 
   const clickDelete=(e,index)=>{
           
-          if(!isDeleting){
+          if(!isDeleting && isDeleted){
+            setIsDeleted(false)
             setIsDeleting(true)
             fetch("https://api.manage.prona.com/client/"+datas[index].id ,{
               method: 'DELETE',
@@ -48,7 +49,7 @@ function App() {
             .then(response => response.json())
             .then((result) => {              
               
-              if(result.id===datas[index].id && !isDeleted ){
+              if(result.id===datas[index].id ){
 
                 const deleteData = datas.slice();
                 deleteData.splice(index,1);
@@ -56,41 +57,14 @@ function App() {
                 
                 setIsDeleting(false)
                 setIsDeleted(true)
-
-                if(!isDeleted && isDeleting){
-
-                  const deleteData = datas.slice();
-                  deleteData.splice(index,1);
-                  setDatas(deleteData);
-                  
-                  setIsDeleted(true)
-                  setIsDeleting(false)
-                }
-
-              }/* else if(result.id===datas[index].id && isDeleted){
-
                 
-
-                const deleteData = datas.slice();
-                deleteData.splice(index,1);
-                setDatas(deleteData);
-
+              }else{
+                setIsDeleting(false)
                 setIsDeleted(false)
-                setIsDeleting(false)
-                
-
-              } */else{
-                setIsDeleting(false)
               }
 
-            })
-            
-            }else{
-              setIsDeleting(false)
-            }
-
-            
-
+            })}
+           
   }
       if (error) {
         return <div>Error: {error.message}</div>;
