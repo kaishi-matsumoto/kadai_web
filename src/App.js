@@ -49,22 +49,33 @@ function App() {
             .then(response => response.json())
             .then((result) => {              
                             
-              if(result.id === datas[index].id && !isDeleted && isDeleting){
-           
+              if(result.id === datas[index].id  && isDeleting){
+                console.log(isDeleted)
+                console.log(isDeleting)
+                
                 const deleteData = datas.slice();
                 deleteData.splice(index,1);
                 setDatas(deleteData);
-                /* setIsDeleted(true) */
+                
                 setIsDeleting(false)
 
-              }else if(result.id === datas[index].id && isDeleted && !isDeleting){
+              }else if(result.id === datas[index].id && !isDeleting){
+                console.log(isDeleted)
+                console.log(isDeleting)
 
                 const deleteData = datas.slice();
                 deleteData.splice(index,1);
                 setDatas(deleteData);
-                setIsDeleted(false)
+                
                 setIsDeleting(true)
 
+              }
+
+              if(!isDeleted){
+                setIsDeleted(true)
+              }else if(isDeleted && isDeleting){
+                setIsDeleting(false)
+                
               }
 
             })}
