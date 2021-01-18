@@ -36,7 +36,7 @@ function App() {
   const clickDelete=(e,index)=>{
           
           if(!isDeleting){
-            /* setIsDeleted(false) */
+           
             setIsDeleting(true)
             fetch("https://api.manage.prona.com/client/"+datas[index].id ,{
               method: 'DELETE',
@@ -59,9 +59,7 @@ function App() {
                 setIsDeleted(true)
                 setIsDeleting(false)
                 
-              }else{
-                setIsDeleting(false)
-                setIsDeleted(false)
+              
               }
 
             })}
