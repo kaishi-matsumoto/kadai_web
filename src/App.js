@@ -6,7 +6,7 @@ function App() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [datas, setDatas] = useState([]);
   const [isDeleting, setIsDeleting] = useState(false)
-  const [isDeleted, setIsDeleted] = useState(true)
+  const [isDeleted, setIsDeleted] = useState(false)
 
 
   useEffect(() => {
@@ -35,8 +35,8 @@ function App() {
 
   const clickDelete=(e,index)=>{
           
-          if(!isDeleting && isDeleted){
-            setIsDeleted(false)
+          if(!isDeleting){
+            /* setIsDeleted(false) */
             setIsDeleting(true)
             fetch("https://api.manage.prona.com/client/"+datas[index].id ,{
               method: 'DELETE',
@@ -55,8 +55,9 @@ function App() {
                 deleteData.splice(index,1);
                 setDatas(deleteData);
                 
-                setIsDeleting(false)
+                
                 setIsDeleted(true)
+                setIsDeleting(false)
                 
               }else{
                 setIsDeleting(false)
