@@ -35,8 +35,8 @@ function App() {
 
   const clickDelete=(e,index)=>{
           
-          if(!isDeleting){
-           ///この時isDeletedはfalse
+          if(!isDeleted && !isDeleting){
+           ///isDeletingをtrueにして、「削除中を表示」
             setIsDeleting(true)
             fetch("https://api.manage.prona.com/client/"+datas[index].id ,{
               method: 'DELETE',
@@ -49,37 +49,45 @@ function App() {
             .then(response => response.json())
             .then((result) => {              
                             
-              if(result.id === datas[index].id  && isDeleting){
-                console.log(isDeleted)
-                console.log(isDeleting)
-                
+              if(result.id === datas[index].id){
+
                 const deleteData = datas.slice();
                 deleteData.splice(index,1);
                 setDatas(deleteData);
-                
+                //isDeletingをfalseにして、「削除中」を非表示
                 setIsDeleting(false)
-
-              }else if(result.id === datas[index].id && !isDeleting){
-                console.log(isDeleted)
-                console.log(isDeleting)
-
-                const deleteData = datas.slice();
-                deleteData.splice(index,1);
-                setDatas(deleteData);
-                
-                setIsDeleting(true)
-
-              }
-
-              if(!isDeleted){
+                //isDeletedをtrueにして、「削除しました」を表示
                 setIsDeleted(true)
-              }else if(isDeleted && isDeleting){
-                setIsDeleting(false)
-                
               }
 
-            })}
-            
+            })}else if(isDeleted && !isDeleting){
+              ///isDeletingをtrueにして、「削除中」を表示
+              setIsDeleting(true)
+              //isDeletedをfalseにして、「削除しました」を非表示
+              setIsDeleted(false)
+              fetch("https://api.manage.prona.com/client/"+datas[index].id ,{
+                method: 'DELETE',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': 'http://localhost:3000', 
+                  },
+                  mode: 'cors',
+              })
+              .then(response => response.json())
+              .then((result) => {              
+                              
+                if(result.id === datas[index].id){
+                          
+                  const deleteData = datas.slice();
+                  deleteData.splice(index,1);
+                  setDatas(deleteData);
+                  //isDeletingをfalseにして「削除中」を非表示
+                  setIsDeleting(false)
+                  //isDeletedをtrueにして「削除しました」を表示
+                  setIsDeleted(true)
+                }
+              })
+            }
   }
       if (error) {
         return <div>Error: {error.message}</div>;
