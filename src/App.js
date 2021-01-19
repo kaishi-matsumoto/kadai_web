@@ -126,24 +126,22 @@ function App() {
     e.preventDefault();
     const registeringData = datas.slice() 
     registeringData.push({name: e.target.title.value})
-       
-    fetch("https://api.manage.prona.com/client/" ,{
+    
+    fetch("https://api.manage.prona.com/client" ,{
               method: 'POST',
                 headers: {
                   'Content-Type': 'application/json',
                   'Access-Control-Allow-Origin': 'http://localhost:3000', 
-                  'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, DELETE'
                 },
                 mode: 'cors',
-                body: JSON.stringify(registeringData), //nameキーに値を入れた配列を送信し、データベースに登録
-                
+                body: JSON.stringify(registeringData[0]), 
 
             })
             .then(response => response.json())
             .then((result) => { 
-                console.log(result) //POSTによって生成されたidが返ってくる(はず)
-                const fetchedData = datas.slice()  
-                fetchedData.push({id: result}) // 配列のidキーに返ってきたresultの値を格納
+                console.log(result) //POSTによってオブジェクトが返ってくる
+                const fetchedData = datas.slice()   
+                fetchedData.push({name: result.name}) // 配列のidキーに返ってきたresultの値を格納
                 setDatas(fetchedData)
             })
   }
