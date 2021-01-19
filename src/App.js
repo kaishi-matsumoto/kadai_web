@@ -7,6 +7,7 @@ function App() {
   const [datas, setDatas] = useState([]);
   const [isDeleting, setIsDeleting] = useState(false)
   const [isDeleted, setIsDeleted] = useState(false)
+  const [edit, setEdit] = useState(false)
 
 
   useEffect(() => {
@@ -89,6 +90,64 @@ function App() {
               })
             }
   }
+
+  const clickEdit =(e,index)=>{
+    setEdit(true)
+    setIsDeleted(false)
+  }
+
+  const fetchCreate=(e,index)=>{
+    console.log(datas[index].id)
+    fetch("https://api.manage.prona.com/client/"+datas[index].id ,{
+              method: 'PUT',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Access-Control-Allow-Origin': 'http://localhost:3000', 
+                },
+                mode: 'cors',
+            })
+            .then(response => response.json())
+            .then((result) => {              
+                            
+              if(result.id === datas[index].id){
+                //今のデータを予め別の変数に格納
+                const completeData = datas[index]
+                //ステートを更新
+                setDatas(completeData);
+                //editをfalseにして配列の描画に戻す
+                setEdit(false)
+              }
+
+            })
+  }
+
+  const registerDatas= (e)=>{
+
+    e.preventDefault();
+    const registeringData = datas.slice() 
+    registeringData.push({name: e.target.title.value})
+       
+    fetch("https://api.manage.prona.com/client/" ,{
+              method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Access-Control-Allow-Origin': 'http://localhost:3000', 
+                  'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, DELETE'
+                },
+                mode: 'cors',
+                body: JSON.stringify(registeringData), //nameキーに値を入れた配列を送信し、データベースに登録
+                
+
+            })
+            .then(response => response.json())
+            .then((result) => { 
+                console.log(result) //POSTによって生成されたidが返ってくる(はず)
+                const fetchedData = datas.slice()  
+                fetchedData.push({id: result}) // 配列のidキーに返ってきたresultの値を格納
+                setDatas(fetchedData)
+            })
+  }
+  
       if (error) {
         return <div>Error: {error.message}</div>;
       } else if (!isLoaded) {
@@ -102,24 +161,18 @@ function App() {
 
         {isDeleting? 
           <div>削除中...</div>
-
-            :
-
+          :
           <div>
             
-            {datas.map((item, index) => (
-              <form key={index} >
-              
-                <div>{item.name}</div>
-                <br />
-                <div className='id'>{item.id}</div>
-                <br />
-                <input onClick={(e)=>clickDelete(e,index)} type="submit" value="削除" />
-                <br />
-              
-              </form>
-          ))}
-          </div> 
+            <form onSubmit={(e)=>registerDatas(e)}>
+              <label>
+                <input　name="title" placeholder="名前" type="text" />
+              </label>
+              <input type="submit" value="登録"/>
+            </form>
+
+            <DataList datas={datas} edit={edit} clickDelete={clickDelete} fetchCreate={fetchCreate} clickEdit={clickEdit} />
+          </div>
           
           }
         
@@ -127,4 +180,48 @@ function App() {
           </div>
     }
 }
+
+function DataList(props){
+  return <div>
+            {props.datas.map((item, index) => (
+              <Datas edit={props.edit} item={item} index={index} clickDelete={props.clickDelete} fetchCreate={props.fetchCreate} clickEdit={props.clickEdit} />
+          ))}
+          </div> 
+}
+
+function Datas(props){
+  
+  const [value, setValue]= useState('')
+  
+  const submitComplete=(e)=>{
+    e.preventDefault();
+    console.log(props.index)
+    props.item.name = e.target.name.value
+    props.fetchCreate(e,props.index)
+
+  }
+
+  return <div>
+    {props.edit? 
+        <form onSubmit={(e)=>submitComplete(e)}>
+           <input name="name" type="text" value={value} onChange={(e)=>setValue(e.target.name.value)} />
+           <input type="submit" value="完了"  />
+         </form>
+            : 
+            <form key={props.index} >
+              
+              <div>{props.item.name}</div>
+              <br />
+              <div className='id'>{props.item.id}</div>
+              <br />
+              <input onClick={(e)=>props.clickEdit(e,props.index)} type="submit" value="編集" />
+              <input onClick={(e)=>props.clickDelete(e,props.index)} type="submit" value="削除" />
+              <br />
+  
+            </form>
+            }
+  </div>
+  
+}
+
 export default App;
