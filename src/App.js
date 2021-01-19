@@ -124,9 +124,10 @@ function App() {
   const registerDatas= (e)=>{
 
     e.preventDefault();
+
     const registeringData = datas.slice() 
-    registeringData.push({name: e.target.title.value})
-    
+    registeringData.push({name: e.currentTarget.title.value})
+    console.log(registeringData[registeringData.length-1])
     fetch("https://api.manage.prona.com/client" ,{
               method: 'POST',
                 headers: {
@@ -134,14 +135,14 @@ function App() {
                   'Access-Control-Allow-Origin': 'http://localhost:3000', 
                 },
                 mode: 'cors',
-                body: JSON.stringify(registeringData[0]), 
+                body: JSON.stringify(registeringData[registeringData.length-1]), 
 
             })
             .then(response => response.json())
             .then((result) => { 
-                console.log(result) //POSTによってオブジェクトが返ってくる
+                console.log(result.name) //POSTによってオブジェクトが返ってくる
                 const fetchedData = datas.slice()   
-                fetchedData.push({name: result.name}) // 配列のidキーに返ってきたresultの値を格納
+                fetchedData.push(result) //末尾にオブジェクトを追加し、既存のデータと一緒に保管しておく 
                 setDatas(fetchedData)
             })
   }
@@ -164,7 +165,7 @@ function App() {
             
             <form onSubmit={(e)=>registerDatas(e)}>
               <label>
-                <input　name="title" placeholder="名前" type="text" />
+                <input name="title" placeholder="名前" type="text" />
               </label>
               <input type="submit" value="登録"/>
             </form>
