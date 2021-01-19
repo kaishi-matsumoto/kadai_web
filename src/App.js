@@ -7,7 +7,7 @@ function App() {
   const [datas, setDatas] = useState([]);
   const [isDeleting, setIsDeleting] = useState(false)
   const [isDeleted, setIsDeleted] = useState(false)
- /*  const [isEdited, setIsEdited] = useState(false) */
+  
 
 
   useEffect(() => {
@@ -23,6 +23,7 @@ function App() {
       .then(res => res.json())
       .then(
         (result) => {
+          
           setIsLoaded(true);
           setDatas(result);
         },
@@ -90,16 +91,18 @@ function App() {
               })
             }
   }
-/* 
-  const clickEdit =(props)=>{
-    setIsEdited(true)
-    console.log(isEdited)
+
+  const clickEdit =()=>{
+   
     setIsDeleted(false)
   }
- */
-  const fetchCreate=(e,index)=>{
-    console.log(datas[index].id)
-    fetch("https://api.manage.prona.com/client/"+datas[index].id ,{
+
+  const fetchCreate=(index)=>{
+   
+    const puttingData = datas.slice() 
+    console.log(puttingData[index])
+
+    fetch("https://api.manage.prona.com/client/"+puttingData[index].id ,{
               method: 'PUT',
                 headers: {
                   'Content-Type': 'application/json',
@@ -110,13 +113,14 @@ function App() {
             .then(response => response.json())
             .then((result) => {              
                             
-              if(result.id === datas[index].id){
+              if(result.id === puttingData[index].id ){
                 //今のデータを予め別の変数に格納
-                const completeData = datas[index]
+                const completeData = datas.slice()
+                completeData.push(result)
                 //ステートを更新
                 setDatas(completeData);
-                //editをfalseにして配列の描画に戻す
-          /*       setIsEdited(false) */
+                
+                
               }
 
             })
@@ -171,7 +175,7 @@ function App() {
               <input type="submit" value="登録"/>
             </form>
 
-            <DataList datas={datas} /* isEdited={isEdited} */ clickDelete={clickDelete} fetchCreate={fetchCreate} /* clickEdit={clickEdit} */ />
+            <DataList datas={datas} clickDelete={clickDelete} fetchCreate={fetchCreate} clickEdit={clickEdit} />
           </div>
           
           }
@@ -184,7 +188,7 @@ function App() {
 function DataList(props){
   return <div>
             {props.datas.map((item, index) => (
-              <Datas /* isEdited={props.isEdited} */ item={item} index={index} clickDelete={props.clickDelete} fetchCreate={props.fetchCreate} clickEdit={props.clickEdit} />
+              <Datas item={item} index={index} clickDelete={props.clickDelete} fetchCreate={props.fetchCreate} clickEdit={props.clickEdit} />
           ))}
           </div> 
 }
@@ -195,28 +199,25 @@ function Datas(props){
   const [isEdited, setIsEdited] = useState(false)
 
   const submitEdit=(e)=>{
+    e.preventDefault();
     setValue(props.item.name)
-    /* console.log(props.item.name) */
-    console.log(value)
-    /* props.clickEdit(props.isEdited) */
-    /* console.log(props.isEdited) */
     setIsEdited(true)
+    props.clickEdit(props.isEdited)
   }
 
-  const submitComplete=(e)=>{
+  const submitComplete=(e, index)=>{
     e.preventDefault();
-    /* console.log(props.index) */
-    console.log(props.isEdited)
     props.item.name = e.target.name.value
-    props.fetchCreate(e,props.index)
+    console.log(props.item.name)
+    console.log(props.item.id)//この時点でnameとidには編集したい文字列とそのidが入っている
+    props.fetchCreate(e,index)
     setIsEdited(false)
-
   }
 
   return <div>
     {isEdited? 
     
-        <form onSubmit={(e)=>submitComplete(e)}>
+        <form onSubmit={(e)=>submitComplete(e,props.index)}>
            <input name="name" type="text" value={value} onChange={(e)=>setValue(e.target.name.value)} />
            <input type="submit" value="完了"  />
          </form>
